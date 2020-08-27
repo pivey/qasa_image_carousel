@@ -1,7 +1,6 @@
-import styled, { createGlobalStyle, css } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import tw from 'tailwind.macro';
-import LeftButton from '../components/LeftButton';
-import RightButton from '../components/RightButton';
+import SvgCheckIcon from '../components/SvgCheckIcon';
 
 export const GlobalStyle = createGlobalStyle`
 html, body {
@@ -11,7 +10,7 @@ html, body {
   text-black
   font-sans
   `}
-  background-color: #C33E24;
+  background-color: #364156;
   box-sizing: border-box;
 }
 `;
@@ -23,7 +22,7 @@ export const Container = styled.div`
   bg-green-300
   h-screen
   `}
-  background-color: #CDBA85;
+  background-color: #F3F3F3;
   position: relative;
   user-select: none;
 `;
@@ -31,10 +30,9 @@ export const Container = styled.div`
 export const PhotoContainer = styled.div`
   ${tw`
   w-full
-  p-4
+  p-10
   flex
   overflow-scroll
-  bg-green-400
 `}
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
@@ -42,6 +40,7 @@ export const PhotoContainer = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+  background-color: #f3f3f3;
 `;
 
 export const PhotoCard = styled.img`
@@ -52,8 +51,9 @@ export const PhotoCard = styled.img`
   mx-8
 `}
   scroll-snap-align: center;
-  height: 400px;
-  width: 600px;
+  height: 300px;
+  width: 500px;
+  border-radius: 2px;
 
   // The display:flex; on parent restricts margin on children. you have to use a transparent border to achieve this.
   &:last-child {
@@ -63,7 +63,6 @@ export const PhotoCard = styled.img`
 
 export const PhotoCountContainer = styled.div`
   ${tw`
-    p-6
     w-full
     flex items-center justify-center
   `}
@@ -79,29 +78,68 @@ export const PhotoCount = styled.a`
   &:hover {
     cursor: pointer;
   }
-  background-color: ${({ selected }) => (selected ? 'black' : 'white')};
+  background-color: ${({ selected }) => (selected ? '#40434E' : '#C2C2C2')};
 `;
 
-const IconStyle = css`
-  height: 2.5rem;
-  width: 2.5rem;
-  top: ${({ top }) => top - 16}px;
-  position: absolute;
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.1);
-  }
-  &:active {
-    transform: scale(1);
-  }
+export const InformationContainer = styled.div`
+  ${tw`
+    w-full
+    py-2 px-6
+    flex
+  `}
 `;
 
-export const LeftIcon = styled(LeftButton)`
-  ${IconStyle}
-  left: -4rem;
+export const InnerContainer = styled.div`
+  ${tw`
+  flex flex-col justify-center
+  p-8
+  `};
+  width: 50%;
 `;
 
-export const RightIcon = styled(RightButton)`
-  ${IconStyle}
-  right: -4rem;
+export const KeyPointHolder = styled.div`
+  ${tw`
+    flex items-center
+    p-4
+    pl-0
+  `}
+`;
+
+export const CheckIcon = styled(SvgCheckIcon)`
+  ${tw`
+    h-8 w-8
+    mr-2
+  `}
+`;
+
+export const H3 = styled.h3`
+  ${tw`
+  text-lg
+  font-bold
+  mb-2
+  `}
+  color: #364156;
+`;
+
+export const H2 = styled.h2`
+  ${tw`
+  text-2xl
+  font-bold
+  mb-4
+  `}
+  color: #82C498;
+`;
+
+export const P = styled.p`
+  ${tw`
+    mt-4
+    text-justify
+  `}
+`;
+
+export const UL = styled.ul`
+  ${tw`
+  py-2
+  `};
+  margin-bottom: -2.5rem;
 `;

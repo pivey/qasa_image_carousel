@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './assets/tailwind.css';
 import './assets/styles.css';
@@ -7,16 +7,24 @@ import {
   Container,
   PhotoContainer,
   PhotoCard,
-  LeftIcon,
-  RightIcon,
   PhotoCount,
   PhotoCountContainer,
+  InformationContainer,
+  InnerContainer,
+  KeyPointHolder,
+  CheckIcon,
+  H2,
+  H3,
+  P,
+  UL,
 } from './styles/index';
 import saveToLocalStorage from './utils/saveToLocalStorage';
+import homeInfo from './homeInfo';
 
 const App = () => {
   const photoGridRef = useRef(null);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
+  const [selectedInfo, setSelectedInfo] = useState(homeInfo[0]);
   const [photoArray, setPhotoArray] = useState(
     JSON.parse(localStorage.getItem('photos')) || []
   );
@@ -36,10 +44,11 @@ const App = () => {
       (entries, observer) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const currentPhoto = photoArray.findIndex(
+            const currentPhotoIndex = photoArray.findIndex(
               photo => photo.id === entry.target.id
             );
-            setSelectedPhoto(currentPhoto);
+            setSelectedPhoto(currentPhotoIndex);
+            setSelectedInfo(homeInfo[currentPhotoIndex]);
             // observer.unobserve(entry.target);
           }
         });
@@ -80,6 +89,29 @@ const App = () => {
               />
             ))}
         </PhotoCountContainer>
+        <InformationContainer>
+          {console.log(selectedInfo)}
+          {selectedInfo && (
+            <>
+              <InnerContainer>
+                <H2>{selectedInfo?.title}</H2>
+                <H3>{selectedInfo?.address}</H3>
+                <P>{selectedInfo?.description}</P>
+              </InnerContainer>
+              <InnerContainer>
+                <H3>Stand out points about the property:</H3>
+                <UL>
+                  {selectedInfo?.keyPoints.map(point => (
+                    <KeyPointHolder>
+                      <CheckIcon />
+                      <li>{point}</li>
+                    </KeyPointHolder>
+                  ))}
+                </UL>
+              </InnerContainer>
+            </>
+          )}
+        </InformationContainer>
       </Container>
     </>
   );
