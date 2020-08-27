@@ -1,120 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import React from 'react';
 import './assets/tailwind.css';
 import './assets/styles.css';
-import {
-  GlobalStyle,
-  Container,
-  PhotoContainer,
-  PhotoCard,
-  PhotoCount,
-  PhotoCountContainer,
-  InformationContainer,
-  InnerContainer,
-  KeyPointHolder,
-  CheckIcon,
-  H2,
-  H3,
-  P,
-  UL,
-} from './styles/index';
-import saveToLocalStorage from './utils/saveToLocalStorage';
-import homeInfo from './homeInfo';
+import { GlobalStyle, Container } from './styles/index';
+import useFetchData from './hooks/useFetchData';
+import useObserver from './hooks/useObserver';
+import PhotoCountContainer from './components/PhotoCountContainer';
+import HomeDescription from './components/HomeDescription';
+import PhotoCarousel from './components/PhotoCarousel';
 
 const App = () => {
-  const photoGridRef = useRef(null);
-  const [selectedPhoto, setSelectedPhoto] = useState(0);
-  const [selectedInfo, setSelectedInfo] = useState(homeInfo[0]);
-  const [photoArray, setPhotoArray] = useState(
-    JSON.parse(localStorage.getItem('photos')) || []
-  );
-  const housePhotos =
-    'https://api.unsplash.com/search/photos?page=1&query=home&client_id=szgXi400gOoMS3kye5ddhENwMDVp4ei2bfO-IGD1Tyc';
-
-  const fetchData = async pathname => axios(pathname);
-
-  useEffect(() => {
-    fetchData(housePhotos)
-      .then(res => saveToLocalStorage('photos', res?.data?.results))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    const observator = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const currentPhotoIndex = photoArray.findIndex(
-              photo => photo.id === entry.target.id
-            );
-            setSelectedPhoto(currentPhotoIndex);
-            setSelectedInfo(homeInfo[currentPhotoIndex]);
-            // observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        root: document.querySelector('#photoContainer'),
-        rootMargin: '0px',
-        threshold: 0.75,
-      }
-    );
-
-    document.querySelectorAll('img').forEach(img => {
-      observator.observe(img);
-    });
-  }, [photoArray]);
+  const { photoArray } = useFetchData();
+  const { selectedInfo, selectedPhoto } = useObserver(photoArray);
 
   return (
     <>
       <GlobalStyle />
       <Container>
-        <PhotoContainer id="photoContainer" ref={photoGridRef}>
-          {photoArray.length > 0 &&
-            photoArray.map(photo => (
-              <PhotoCard
-                id={photo.id}
-                key={photo.id}
-                src={photo?.urls?.regular}
-              />
-            ))}
-        </PhotoContainer>
-        <PhotoCountContainer>
-          {photoArray.length > 0 &&
-            photoArray.map((photo, ind) => (
-              <PhotoCount
-                selected={selectedPhoto === ind}
-                key={photo.created_at}
-                href={`#${photo.id}`}
-              />
-            ))}
-        </PhotoCountContainer>
-        <InformationContainer>
-          {console.log(selectedInfo)}
-          {selectedInfo && (
-            <>
-              <InnerContainer>
-                <H2>{selectedInfo?.title}</H2>
-                <H3>{selectedInfo?.address}</H3>
-                <P>{selectedInfo?.description}</P>
-              </InnerContainer>
-              <InnerContainer>
-                <H3>Stand out points about the property:</H3>
-                <UL>
-                  {selectedInfo?.keyPoints.map(point => (
-                    <KeyPointHolder>
-                      <CheckIcon />
-                      <li>{point}</li>
-                    </KeyPointHolder>
-                  ))}
-                </UL>
-              </InnerContainer>
-            </>
-          )}
-        </InformationContainer>
+        <PhotoCarousel photoArray={photoArray} />
+        <PhotoCountContainer
+          photoArray={photoArray}
+          selectedPhoto={selectedPhoto}
+        />
+        <HomeDescription selectedInfo={selectedInfo} />
       </Container>
     </>
   );
 };
-
 export default App;
