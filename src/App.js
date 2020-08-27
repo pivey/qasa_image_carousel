@@ -16,7 +16,6 @@ import saveToLocalStorage from './utils/saveToLocalStorage';
 
 const App = () => {
   const photoGridRef = useRef(null);
-  const [iconTop, setIconTop] = useState(0);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [photoArray, setPhotoArray] = useState(
     JSON.parse(localStorage.getItem('photos')) || []
@@ -33,36 +32,35 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    console.log('here are your photos', photoArray);
+    const observator = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const currentPhoto = photoArray.findIndex(
+              photo => photo.id === entry.target.id
+            );
+            setSelectedPhoto(currentPhoto);
+            // observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: document.querySelector('#photoContainer'),
+        rootMargin: '0px',
+        threshold: 0.75,
+      }
+    );
+
+    document.querySelectorAll('img').forEach(img => {
+      observator.observe(img);
+    });
   }, [photoArray]);
-
-  useLayoutEffect(() => {
-    const photoContainer = photoGridRef.current;
-    const { scrollWidth } = photoGridRef.current;
-    const dividedLength = scrollWidth / photoArray.length;
-    const lengthArray = photoArray.map((_, ind) => dividedLength * ind);
-    const trackScrollPos = () => {
-      const currentScrollPos = photoContainer.scrollLeft;
-      console.log(currentScrollPos);
-    };
-
-    photoContainer.current.addEventListener('scroll', trackScrollPos, false);
-    return function cleanup() {
-      photoContainer.current.removeEventListener(
-        'scroll',
-        trackScrollPos,
-        false
-      );
-    };
-  }, [photoArray, photoArray.length]);
 
   return (
     <>
       <GlobalStyle />
       <Container>
-        {/* <LeftIcon top={iconTop} />
-        <RightIcon top={iconTop} /> */}
-        <PhotoContainer ref={photoGridRef}>
+        <PhotoContainer id="photoContainer" ref={photoGridRef}>
           {photoArray.length > 0 &&
             photoArray.map(photo => (
               <PhotoCard

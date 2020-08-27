@@ -37,7 +37,6 @@ export const PhotoContainer = styled.div`
   bg-green-400
 `}
   scroll-snap-type: x mandatory;
-  overflow-x: scroll;
   scroll-behavior: smooth;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
