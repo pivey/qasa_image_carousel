@@ -2,10 +2,6 @@
 
 A codetest received from Qasa
 
-create a file called 'keys.js' in /src and export this as 'accessKey'
-
-access key: szgXi400gOoMS3kye5ddhENwMDVp4ei2bfO-IGD1Tyc
-
 ## Technologies:
 ReactJS
 ### Axios:
